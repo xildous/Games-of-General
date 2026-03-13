@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game of the Generals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar">
+
+      <div class="brand">
+        <div class="brand-deco">✦ ✦ ✦ ✦ ✦</div>
+        <h1>GAME OF<br>THE GENERALS</h1>
+        <div class="brand-deco">✦ ✦ ✦ ✦ ✦</div>
+        <div class="brand-subtitle">ESTRATEHIYA</div>
+      </div>
+
+      <div class="control-panel">
+        <div class="ctrl-group">
+          <label class="ctrl-label" for="modeSelect">Game Mode</label>
+          <select id="modeSelect" class="ctrl-select">
+            <option value="pvp">Player vs Player</option>
+            <option value="cpu">Player vs Computer</option>
+            <option value="online">Online 2 Players</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label" for="difficultySelect">AI Difficulty</label>
+          <select id="difficultySelect" class="ctrl-select">
+            <option value="normal">Normal</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+            <option value="pro">Pro</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label" for="levelSelect">Battle Level</label>
+          <select id="levelSelect" class="ctrl-select"></select>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label" for="colorSelect">Your Color</label>
+          <select id="colorSelect" class="ctrl-select">
+            <option value="white">White (Player 1)</option>
+            <option value="black">Black (Player 2)</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label" for="themeSelect">Board Theme</label>
+          <select id="themeSelect" class="ctrl-select">
+            <option value="military">Military</option>
+            <option value="night">Night Ops</option>
+            <option value="classic">Classic Field</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="profile-panel">
+        <div class="ctrl-label">Commander Profile</div>
+        <div class="profile-row">
+          <input id="avatarInput" class="ctrl-input" type="text" maxlength="2" value="🛡" />
+          <input id="displayNameInput" class="ctrl-input" type="text" maxlength="20" value="Commander" />
+        </div>
+      </div>
+
+      <div class="custom-piece-panel">
+        <div class="ctrl-label">Custom Piece Name</div>
+        <div class="profile-row">
+          <select id="pieceNameSelect" class="ctrl-select"></select>
+          <input id="pieceAliasInput" class="ctrl-input" type="text" maxlength="18" placeholder="Alias" />
+        </div>
+        <button id="saveAliasBtn" class="btn btn-secondary" type="button">Save Alias</button>
+      </div>
+
+      <div id="onlineControls" class="online-panel hidden-ui">
+        <div class="ctrl-label">Online Room</div>
+        <div class="online-row">
+          <input id="roomInput" class="ctrl-input" type="text" value="room-1" placeholder="Room name" />
+          <button id="connectBtn" class="btn btn-connect" type="button">Connect</button>
+        </div>
+        <div class="online-row">
+          <button id="submitSetupBtn" class="btn btn-primary hidden-ui" type="button">Submit Setup</button>
+        </div>
+        <div class="online-row">
+          <button id="inviteBtn" class="btn btn-secondary" type="button">Copy Invite</button>
+          <button id="spectateBtn" class="btn btn-secondary" type="button">Spectate</button>
+        </div>
+        <div id="connectionStatus" class="connection-status">Offline</div>
+        <div id="lobbyStatus" class="lobby-status">Players: -</div>
+      </div>
+
+      <div class="turn-panel">
+        <div class="turn-label">Active Turn</div>
+        <div id="turnIndicator" class="turn-indicator">Player 1</div>
+      </div>
+
+      <div class="action-buttons">
+        <button id="autoDeployBtn" class="btn btn-secondary">⚡ Auto Deploy</button>
+        <button id="restartBtn" class="btn btn-primary">↺ Restart Game</button>
+      </div>
+
+      <div class="history-panel">
+        <div class="ctrl-label">Replay & Rewind</div>
+        <div id="historyStatus" class="history-status">No moves yet</div>
+        <div class="history-controls">
+          <button id="undoBtn" class="btn btn-secondary" type="button">Undo</button>
+          <button id="prevMoveBtn" class="btn btn-secondary" type="button">◀</button>
+          <button id="playReplayBtn" class="btn btn-secondary" type="button">Play</button>
+          <button id="nextMoveBtn" class="btn btn-secondary" type="button">▶</button>
+        </div>
+        <div class="history-controls">
+          <button id="shareReplayBtn" class="btn btn-secondary" type="button">Share Replay</button>
+          <button id="loadReplayBtn" class="btn btn-secondary" type="button">Load Replay</button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <p>Hidden info mode — only your own piece ranks are visible.</p>
+        <p>Win or Lose is shown at game end only.</p>
+        <p>Made by Bryle</p>
+      </div>
+
+    </aside>
+
+    <!-- ── MAIN BOARD ── -->
+    <main class="main-content">
+
+      <div id="battleMessage" class="battle-message">&nbsp;</div>
+
+      <div class="board-wrap">
+        <div class="board-coord-wrapper">
+          <div class="board-corner"></div>
+          <div class="board-col-labels">
+            <span>A</span><span>B</span><span>C</span><span>D</span>
+            <span>E</span><span>F</span><span>G</span><span>H</span>
+          </div>
+          <div class="board-row-labels">
+            <span>9</span><span>8</span><span>7</span><span>6</span>
+            <span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+          </div>
+          <div id="board" class="board" aria-label="Game board"></div>
+        </div>
+      </div>
+
+      <div class="setup-section">
+        <h2 id="setupTitle" class="setup-heading">Reserve Pieces</h2>
+        <div id="setupStatus" class="setup-status"></div>
+        <div id="reserveTray" class="reserve-tray"></div>
+      </div>
+
+      <div id="chatSection" class="chat-section">
+        <div class="chat-header">
+          <h2 class="setup-heading">Room Chat</h2>
+          <div class="chat-voice-row">
+            <button id="muteBtn" class="btn btn-secondary" type="button">Enable Mic</button>
+            <div id="voiceStatus" class="connection-status">Voice: idle</div>
+            <span class="chat-voice-dot-label">You <span id="localSpeakingDot" class="speak-dot"></span></span>
+            <span class="chat-voice-dot-label">Peer <span id="peerSpeakingDot" class="speak-dot"></span></span>
+          </div>
+          <div class="chat-emoji-row">
+            <button class="emoji-btn" data-emoji="😀" type="button">😀</button>
+            <button class="emoji-btn" data-emoji="🔥" type="button">🔥</button>
+            <button class="emoji-btn" data-emoji="🛡" type="button">🛡</button>
+            <button class="emoji-btn" data-emoji="🎯" type="button">🎯</button>
+          </div>
+        </div>
+        <div id="chatLog" class="chat-log"></div>
+        <div class="chat-input-row">
+          <input id="chatInput" class="ctrl-input" type="text" maxlength="180" placeholder="Type message..." />
+          <button id="sendChatBtn" class="btn btn-connect" type="button">Send</button>
+        </div>
+      </div>
+
+    </main>
+
+  </div><!-- /.app-shell -->
+
+  <!-- Hidden capture containers (game logic only) -->
+  <div class="hidden-ui">
+    <div id="capturedByP1"></div>
+    <div id="capturedByP2"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
